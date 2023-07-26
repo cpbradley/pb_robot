@@ -38,6 +38,13 @@ if __name__ == '__main__':
 
     # Get the configuration of the arm
     q = robot.arm.GetJointValues()
+    # print(q)
+    # import time
+    # import math
+    # newq = [0.0, -3*math.pi/4, 3*math.pi/4, 0.0, math.pi/4, 0.0]
+    # # newq = [0.0, -0.50, 0.0, 0.0, 0.0, 0.0]
+    # robot.arm.SetJointValues(newq)
+    # time.sleep(10)
 
     # Compute the forward kinematics
     pose = robot.arm.ComputeFK(q)
@@ -101,7 +108,13 @@ if __name__ == '__main__':
         withFloor = robot.arm.isCollisionFree(floorq)
         withoutFloor = robot.arm.isCollisionFree(floorq, obstacles=[])
         print("Check against floor? {}. Check without floor? {}".format(withFloor, withoutFloor))
-
+    
+    for ii in range(1000):
+        qrand = robot.arm.randomConfiguration()
+        cfree = robot.arm.IsCollisionFree(qrand, self_collisions=True)
+        assert not cfree
+        print(qrand)
+        print(cfree)
 
     ##########################
     # Motion Planning Examples 

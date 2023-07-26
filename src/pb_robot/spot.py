@@ -20,6 +20,15 @@ class Spot(pb_robot.body.Body):
         self.arm_joint_names = ['arm_sh0', 'arm_sh1', 'arm_el0', 'arm_el1', 'arm_wr0', 'arm_wr1']
         self.arm_joints = [self.joint_from_name(n) for n in self.arm_joint_names]
 
+        # self.base_joint_names = ['x', 'y', 'theta']
+        self.base_joint_names = ['base_joint']
+        self.base_joints =[self.joint_from_name(n) for n in self.base_joint_names]
+
+        self.base_joint = self.base_joints[0]
+
+        # self.body_joint_names = ['_joint']
+        # self.body_joints =[self.joint_from_name(n) for n in self.body_joint_names]
+
         self.hand = SpotHand(self.id, eeFrame=self.link_from_name(self.eeName))
         self.arm = Manipulator(self.id, self.arm_joints, self.hand, self.eeName)
 
@@ -37,6 +46,15 @@ class SpotArm(pb_robot.body.Body):
         self.eeName = 'arm_link_wr1'
         self.arm_joint_names = ['arm_sh0', 'arm_sh1', 'arm_el0', 'arm_el1', 'arm_wr0', 'arm_wr1']
         self.arm_joints = [self.joint_from_name(n) for n in self.arm_joint_names]
+
+        # self.base_joint_names = ['x', 'y', 'theta']
+        self.base_joint_names = ['base_joint']
+        self.base_joints =[self.joint_from_name(n) for n in self.base_joint_names]
+
+        self.base_joint = self.base_joints[0]
+
+        # self.body_joint_names = ['_joint']
+        # self.body_joints =[self.joint_from_name(n) for n in self.body_joint_names]
 
         self.hand = SpotHand(self.id, eeFrame=self.link_from_name(self.eeName))
         self.arm = Manipulator(self.id, self.arm_joints, self.hand, self.eeName)
@@ -154,6 +172,7 @@ class Manipulator(object):
         min_limits, max_limits = self.GetJointLimits()
 
         solutions = analytic_spot_ik_6(wrist_pose_shoulderF, min_limits, max_limits)
+        print(f'Found {len(solutions)} solutions')
         return select_solution(solutions, get_l1_distance, nearby_conf=seed_q)
 
     def get_collisionfn(self, obstacles=None, self_collisions=True):

@@ -34,4 +34,7 @@ class SnapPlanner(object):
             return None
 
         # Have collision-free path. For now just return two points
-        return [start_q, goal_q]
+        # return [start_q, goal_q]
+        # print(interp)
+        # print([start_q, goal_q])
+        return middle_qs

@@ -7,6 +7,7 @@ from .crg_planners.rrt_connect import birrt, direct_path
 import numpy as np
 import pybullet as p
 import pb_robot
+
 import pb_robot.geometry as geometry
 
 PI = np.pi
@@ -440,7 +441,8 @@ def plan_cartesian_motion(robot, first_joint, target_link, waypoint_poses,
     # TODO: plan a path without needing to following intermediate waypoints
 
     lower_limits, upper_limits = robot.get_custom_limits(robot.get_movable_joints(), custom_limits)
-    selected_links = robot.get_link_subtree(first_joint) # TODO: child_link_from_joint?
+    # selected_links = robot.get_link_subtree(first_joint) # TODO: child_link_from_joint?
+    selected_links = target_link.get_link_subtree() # TODO: child_link_from_joint?
     selected_movable_joints = robot.prune_fixed_joints(selected_links)
     assert(target_link in selected_links)
     selected_target_link = selected_links.index(target_link)

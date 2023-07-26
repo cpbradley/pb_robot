@@ -28,7 +28,7 @@ BodyInfo = namedtuple('BodyInfo', ['base_name', 'body_name'])
 DynamicsInfo = namedtuple('DynamicsInfo', ['mass', 'lateral_friction', 'local_inertia_diagonal',
                                            'local_inertial_pos', 'local_inertial_orn',
                                            'restitution', 'rolling_friction', 'spinning_friction',
-                                           'contact_damping', 'contact_stiffness'])
+                                           'contact_damping', 'contact_stiffness', 'body_type', 'collision_margin'])
 
 class Body(object):
     def __init__(self, bodyID, path=None):
@@ -106,7 +106,7 @@ class Body(object):
         return pb_robot.geometry.euler_from_quat(self.get_quat())
 
     def get_base_values(self):
-        return pb_robot.utils.base_values_from_pose(self.get_pose())
+        return pb_robot.geometry.base_values_from_pose(self.get_pose())
 
     def set_pose(self, pose):
         (point, quat) = pose

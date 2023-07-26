@@ -105,21 +105,52 @@ class Link(object):
     def get_link_subtree(self, **kwargs):
         return [self] + self.get_link_descendants(**kwargs)
 
-    def get_local_link_pose(self): #XXX test
-        parent_joint = self.body.parent_link_from_joint(self.jointID)
+    # def get_local_link_pose(self): #XXX test
+    #     # parent_joint = self.body.parent_link_from_joint(self.jointID)
+    #     parent_joint = self.parentJoint
+
+    #     #world_child = get_link_pose(body, joint)
+    #     #world_parent = get_link_pose(body, parent_joint)
+    #     ##return geometry.multiply(geometry.invert(world_parent), world_child)
+    #     #return geometry.multiply(world_child, geometry.geometry.invert(world_parent))
+
+    #     # https://github.com/bulletphysics/bullet3/blob/9c9ac6cba8118544808889664326fd6f06d9eeba/examples/pybullet/gym/pybullet_utils/urdfEditor.py#L169
+    #     # parent_com = self.body.get_joint_parent_frame(self.jointID)
+    #     parent_com = parent_joint.get_joint_parent_frame()
+    #     # tmp_pose = geometry.invert(geometry.multiply(self.body.get_joint_inertial_pose(self.jointID), parent_com))
+    #     dynamics_info = self.body.get_dynamics_info(linkID=self.linkID)
+    #     inert_pose = dynamics_info.local_inertial_pos, dynamics_info.local_inertial_orn
+    #     tmp_pose = geometry.invert(geometry.multiply(inert_pose, parent_com))
+    #     # tmp_pose = geometry.invert(geometry.multiply(parent_joint.get_joint_inertial_pose(), parent_com))
+    #     # parent_inertia = self.body.get_joint_inertial_pose(parent_joint)
+    #     parent_inertia = parent_joint.get_joint_inertial_pose()
+    #     #return geometry.multiply(parent_inertia, tmp_pose) # TODO: why is this wrong...
+    #     _, orn = geometry.multiply(parent_inertia, tmp_pose)
+    #     pos, _ = geometry.multiply(parent_inertia, geometry.Pose(parent_com[0]))
+    #     return (pos, orn)
+
+    def get_local_link_pose(self):
+        # parent_joint = parent_link_from_joint(body, joint)
+        import pb_robot
+        joint_info = pb_robot.joint.JointInfo(*p.getJointInfo(self.body.id, self.linkID, physicsClientId=CLIENT))
+        if self.linkID == -1:
+            parent_joint = None
+        else:
+            parent_joint = joint_info.parentIndex
 
         #world_child = get_link_pose(body, joint)
         #world_parent = get_link_pose(body, parent_joint)
-        ##return geometry.multiply(geometry.invert(world_parent), world_child)
-        #return geometry.multiply(world_child, geometry.geometry.invert(world_parent))
+        ##return multiply(invert(world_parent), world_child)
+        #return multiply(world_child, invert(world_parent))
 
         # https://github.com/bulletphysics/bullet3/blob/9c9ac6cba8118544808889664326fd6f06d9eeba/examples/pybullet/gym/pybullet_utils/urdfEditor.py#L169
-        parent_com = self.body.get_joint_parent_frame(self.jointID)
-        tmp_pose = geometry.invert(geometry.multiply(self.body.get_joint_inertial_pose(self.jointID), parent_com))
-        parent_inertia = self.body.get_joint_inertial_pose(parent_joint)
-        #return geometry.multiply(parent_inertia, tmp_pose) # TODO: why is this wrong...
+        # parent_com = get_joint_parent_frame(body, joint)
+        parent_com =  joint_info.parentFramePos, joint_info.parentFrameOrn
+        dynamics_info = self.body.get_dynamics_info(linkID=self.linkID)
+        inert_pose = dynamics_info.local_inertial_pos, dynamics_info.local_inertial_orn
+        tmp_pose = geometry.invert(geometry.multiply(inert_pose, parent_com))
+        dynamics_info = self.body.get_dynamics_info(parent_joint)
+        parent_inertia = dynamics_info.local_inertial_pos, dynamics_info.local_inertial_orn
         _, orn = geometry.multiply(parent_inertia, tmp_pose)
         pos, _ = geometry.multiply(parent_inertia, geometry.Pose(parent_com[0]))
         return (pos, orn)
-
-
