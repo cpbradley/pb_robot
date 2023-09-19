@@ -52,7 +52,7 @@ def rrt(start, goal_sample, distance, sample, extend, collision, goal_test=lambd
         goal_sample = lambda: g
     nodes = [TreeNode(start)]
     for i in irange(iterations):
-        goal = random() < goal_probability or i == 0
+        goal = random() < goal_probability
         s = goal_sample() if goal else sample()
 
         last = argmin(lambda n: distance(n.config, s), nodes)
