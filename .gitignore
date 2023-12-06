@@ -11,3 +11,5 @@ temp
 **~
 **/*.swp
 **/*.~un
+
+*egg-info*
